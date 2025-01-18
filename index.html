@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar with Dynamic Categories</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+        </div>
+        <div class="sort-text">Sort by View</div>
+        <button class="blog-button">Blog</button>
+    </nav>
+    <hr class="divider">
+    <div class="button-container">
+        <button class="option-button" onclick="fetchCategoryVideos('1000')">All</button>
+        <button class="option-button" onclick="fetchCategoryVideos('1001')">Music</button>
+        <button class="option-button" onclick="fetchCategoryVideos('1003')">Comedy</button>
+        <button class="option-button" onclick="fetchCategoryVideos('1005')">Drawing</button>
+    </div>
+    <div class="card-grid" id="card-grid"></div>
+
+    <script>
+        const BASE_API_URL = 'https://openapi.programming-hero.com/api/videos/category/';
+
+    
+        async function fetchCategoryVideos(categoryId) {
+            try {
+                const response = await fetch(`${BASE_API_URL}${categoryId}`); 
+                const data = await response.json();
+                displayVideos(data.data);
+            } catch (error) {
+                console.error(`Error fetching videos for category ${categoryId}:`, error); 
+            }
+        }
+
+
+        function displayVideos(videos) {
+            const cardGrid = document.getElementById('card-grid');
+            cardGrid.innerHTML = ''; 
+
+            videos.forEach(video => {
+                const thumbnail = video.thumbnail || 'default-thumbnail.jpg'; 
+                const title = video.title || 'No Title';                    
+                const views = video.views || '0';                           
+                const author = video.author || 'Unknown';                    
+
+            
+                const cardHTML = `
+                    <div class="card">
+                        <img src="${thumbnail}" alt="Video Thumbnail" class="card-image">
+                        <div class="card-content">
+                            <h3>${title}</h3>
+                            <div class="card-footer">
+                                <span>${author}</span>
+                                <span class="views">${views} views</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            
+                cardGrid.innerHTML += cardHTML;
+            });
+        }
+
+        fetchCategoryVideos('1000');
+    </script>
+</body>
+</html>
